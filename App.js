@@ -1,23 +1,41 @@
 import { useState } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, ScrollView, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput, Modal, Image } from 'react-native';
+import {StatusBar} from 'expo-status-bar'
+import Listmanage from './Compo/Listmanage';
 
 export default function App() {
   var [text, setText]=useState('');
-  var [goals, setGoals]=useState([])
+  var [goals, setGoals]=useState([]);
+  var [modal, setModal]=useState(false)
   function handleClick() {
     if(text){
-      setGoals((myGoals)=>[...myGoals, text])
+      setGoals((myGoals)=>[...myGoals, text]);
+      setText("");
     }
-    console.log(goals)
+    setModal(false)
   }
   return (
+    <>
+    <StatusBar style='inverted' />
     <View style={styles.container}>
-      <View style={styles.addgoal}>
+      <View style={styles.btn}>
+      <Button title='Show Goals' color={'red'} onPress={()=>{
+        setModal(true)
+      }} />
+      </View>
+      {modal && <Modal visible={modal} animationType='slide' >
+        <View style={styles.imgview}>
+        <Image style={styles.img} source={require('./assets/pikachu.png')} />
+        <View style={styles.addgoal}>
         <TextInput placeholder='Add goals' style={styles.text} onChangeText={(text)=>{
           setText(text)
-        }}></TextInput>
+        }} value={text} />
         <Button title='Add!' onPress={handleClick}/>
       </View>
+      </View>
+      </Modal>}
+       
+
         <View style={styles.goals}>
         {/* <ScrollView>
         <Text>List of Goals</Text>
@@ -29,7 +47,8 @@ export default function App() {
           })
         }
         </ScrollView> */}
-        <FlatList data={goals} renderItem={(goalItem)=>{
+        <Listmanage goals={goals} setGoals={setGoals} />
+        {/* <FlatList data={goals} renderItem={(goalItem)=>{
           return (
             <View  style={styles.item}>
             <Text style={styles.itemtext} key={goalItem.index}>{goalItem.item}</Text>
@@ -43,17 +62,17 @@ export default function App() {
             }} />
             </View>
           )
-        }} />
+        }} /> */}
         </View>
     </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 50,
-    backgroundColor: '#fff',
+    backgroundColor: 'blueviolet',
   },
   addgoal:{
     flex: 1,
@@ -74,24 +93,23 @@ const styles = StyleSheet.create({
     flex: 4,
     marginLeft: '10%',
   },
-  item:{
-    backgroundColor: 'antiquewhite',
-    flexDirection: 'row',
-    width: '80%',
-    height: 40,
-    textAlignVertical: 'center',
-    fontSize: 20,
-    paddingLeft: 20,
-    margin: 10,
-    borderRadius: 5,
+  img:{
+    flex: 0.35, 
+    width: 200,
+    marginLeft: '20%',
+    marginRight: 500,
+    marginTop: 100,
+    marginBottom: -300,
   },
-  itemtext:{
-    color: 'blue', 
+  imgview:{
     flex: 1,
-    textAlignVertical: 'center',
+    flexDirection: 'column',
   },
   btn:{
-    flex: 1,
+    width: '71.5%',
+    justifyContent: 'space-evenly',
+    marginLeft: '13%',
+    marginTop: 70,
+    marginBottom: 10,
   }
-
 });
