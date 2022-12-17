@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput, ScrollView, FlatList } from 'react-native';
 
 export default function App() {
   var [text, setText]=useState('');
   var [goals, setGoals]=useState([])
   function handleClick() {
     if(text){
-      setGoals([...goals, text])
+      setGoals((myGoals)=>[...myGoals, text])
     }
     console.log(goals)
   }
@@ -18,12 +18,33 @@ export default function App() {
         }}></TextInput>
         <Button title='Add!' onPress={handleClick}/>
       </View>
-      <View style={styles.goals}>
+        <View style={styles.goals}>
+        {/* <ScrollView>
         <Text>List of Goals</Text>
         {
-
+          goals.map((item, index)=>{
+            return (
+              <Text style={styles.item} key={index}>{item}</Text>
+            )
+          })
         }
-      </View>
+        </ScrollView> */}
+        <FlatList data={goals} renderItem={(goalItem)=>{
+          return (
+            <View  style={styles.item}>
+            <Text style={styles.itemtext} key={goalItem.index}>{goalItem.item}</Text>
+            <Button title='Delete' style={styles.btn} onPress={()=>{
+              const index = goals.indexOf(goalItem.item);
+              if (index > -1) { // only splice array when item is found
+                goals.splice(index, 1); // 2nd parameter means remove one item only
+              }
+              setGoals((updatedGoals)=>[...updatedGoals])
+              //setGoals([...goals])
+            }} />
+            </View>
+          )
+        }} />
+        </View>
     </View>
   );
 }
@@ -33,8 +54,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 50,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   addgoal:{
     flex: 1,
@@ -53,5 +72,26 @@ const styles = StyleSheet.create({
   },
   goals:{
     flex: 4,
+    marginLeft: '10%',
+  },
+  item:{
+    backgroundColor: 'antiquewhite',
+    flexDirection: 'row',
+    width: '80%',
+    height: 40,
+    textAlignVertical: 'center',
+    fontSize: 20,
+    paddingLeft: 20,
+    margin: 10,
+    borderRadius: 5,
+  },
+  itemtext:{
+    color: 'blue', 
+    flex: 1,
+    textAlignVertical: 'center',
+  },
+  btn:{
+    flex: 1,
   }
+
 });
